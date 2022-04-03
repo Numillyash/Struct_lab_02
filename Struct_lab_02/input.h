@@ -17,4 +17,4 @@
 #define lcg "lcg"
 #define bits "bits"
 
-int check_input(WORK_MODE* wm, unsigned long long* array);
+int check_input(WORK_MODE* wm, ull* array);
