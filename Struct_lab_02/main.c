@@ -1,16 +1,37 @@
 #include "input.h"
-#include "output.h"
+#include "LCG.h"
 
 int main()
 {
+	save_init();
 	ull numbers[6] = {0,0,0,0,0,0};
 	WORK_MODE wm;
-
 	int i = check_input(&wm, numbers);
 
-	for (i = 0; i < 6; i++)
+	if (i == -1)
 	{
-		printf("%d\n", numbers[i]);
+		save_text("incorrect command");
 	}
-	printf("%d", i);
+	else
+	{
+		switch (wm)
+		{
+		case GET_C:
+			get_c_wm(numbers);
+			break;
+		case GET_A:
+			get_a_wm(numbers);
+			break;
+		case LCG:
+			lcg_wm(numbers);
+			break;
+		case BITS:
+			bits_wm(numbers);
+			break;
+		default:
+			break;
+		}
+	}
+
+	save_close();
 }
