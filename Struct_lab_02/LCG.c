@@ -128,7 +128,7 @@ void lcg_wm(ull numbers[6])
 {
 	ull i;
 
-	if (numbers[5] == 0 || numbers[4] == 0 || numbers[1] == 0 || (numbers[2] == 0 && numbers[3] == 0) || numbers[1] >= numbers[4] || numbers[2] >= numbers[4] || numbers[3] >= numbers[4])
+	if (numbers[5] == 0 || numbers[4] == 0 || numbers[1] < 2 || (numbers[2] == 0 && numbers[3] == 0) || numbers[1] >= numbers[4] || numbers[2] >= numbers[4] || numbers[3] >= numbers[4])
 	{
 		save_text("no solution");
 	}
@@ -154,7 +154,7 @@ void bits_wm(ull numbers[6])
 		_bits[i] = 0;
 	}
 
-	if (numbers[5] == 0 || numbers[4] == 0 || numbers[1] == 0 || (numbers[2] == 0 && numbers[3] == 0) || numbers[1] >= numbers[4] || numbers[2] >= numbers[4] || numbers[3] >= numbers[4])
+	if (numbers[5] == 0 || numbers[4] == 0 || numbers[1] < 2 || (numbers[2] == 0 && numbers[3] == 0) || numbers[1] >= numbers[4] || numbers[2] >= numbers[4] || numbers[3] >= numbers[4])
 	{
 		save_text("no solution");
 	}
