@@ -1,4 +1,143 @@
-#include "LCG.h"
+#include "output.h"
+
+ull mul_mod(ull a, ull b, ull m) {
+    ull d = 0, _a=a, _b=b;
+    int i_a =0 , i_b = 0, zn = 1;
+    
+    while (_a) // подсчет битов a
+    {
+        i_a++;
+        _a >>= 1;
+    }
+    while (_b) // подсчет битов b
+    {
+        i_b++;
+        _b >>= 1;
+    }
+    
+    if(i_a + i_b <= 64) // если сумма битов не превышает 64
+        return a * b % m; // возвращаем обычным действиями
+    
+    // идея: a mod m = (a-m) mod m
+    // так как мы храним только неотрицательные числа, 
+    // будем хранить m-a и если что менять знак
+    // (-a) mod m = -(a mod m) = m - (a mod m) = m - a (a < m)
+    //
+    // (-a * b) mod m = (-a) mod m * b mod m = -(a mod m * b mod m) =
+    // = -((a * b) mod m) = m - ((a * b) mod m)
+    // 
+    // ((a * b) mod m) = m - (-a * b) mod m
+    //
+    // (-a * -b) mod m = (-a) mod m * (-b) mod m = 
+    // = (a mod m * b mod m) = (a * b) mod m
+    // 
+    // (a * b) mod m = (-a * -b) mod m
+
+    if(i_a > 32) 
+    {
+        _a = m - a;
+        zn *= -1;
+    }
+    else
+        _a = a;
+    if(i_b > 32)
+    {
+        _b = m - b;
+        zn *= -1;
+    }
+    else
+        _b = b;    
+
+    // считаем то, что гарантированно влезло в 64 бита
+    d = _a * _b;
+
+    d %= m;
+
+    if(zn == -1) // если числа менялись
+        d = m-d;
+
+    return d;
+}
+
+ull sum_mod(ull a, ull b, ull m) {
+    ull d = 0, _a=a, _b=b;
+    int i_a =0 , i_b = 0, zn = 0;
+    
+    while (_a) // подсчет битов a
+    {
+        i_a++;
+        _a >>= 1;
+    }
+    while (_b) // подсчет битов b
+    {
+        i_b++;
+        _b >>= 1;
+    }
+
+    if((max(i_a, i_b)) <= 63) // если сумма битов не превышает 64
+        return (a + b) % m; // возвращаем обычным действиями
+
+    // идея: a mod m = (a-m) mod m
+    // так как мы храним только неотрицательные числа, 
+    // будем хранить m-a и если что менять знак
+    // (-a) mod m = -(a mod m) = m - (a mod m) = m - a (a < m)
+    //
+    // если заменены оба числа
+    // (a+b) mod m = m - (_a + _b) = m - (m - a + m - b) = (a + b - m) = (a+b) mod m
+    //
+    // если заменено a
+    // (a+b) mod m = - _a + b = -(m - a) + b = a + b - m = (a+b) mod m
+    // если _a > b (b - _a < 0)
+    // - _a + b = -(_a - b) = m - (_a - b)
+    //
+    // если заменено b
+    // (a+b) mod m = a - _b = a - (m - b) = a + b - m = (a+b) mod m
+    // если _b > a (a - _b < 0)
+    // a - _b = -(_b - a) = m - (_b - a)
+    //
+
+    if(i_a > 63) 
+    {
+        _a = m - a;
+        zn = 1;
+    }
+    else
+        _a = a;
+    if(i_b > 63)
+    {
+        _b = m - b;
+        if(zn == 1)
+            zn = 3;
+        else 
+            zn = 2;
+    }
+    else
+        _b = b;    
+
+    if(zn == 3)
+    {
+        d = m-(_a + _b);
+    }
+    if(zn == 2)
+    {
+        if(a - _b < 0)
+            d = m - (_b - a);
+        else
+            d = a - _b;
+    }
+    if(zn == 1)
+    {
+        if(b - _a < 0)
+            d = m - (_a - b);
+        else
+            d = b - _a;
+    }
+    if(zn == 0)
+    {
+        d = _a + _b;
+    }
+    return d;
+}
 
 struct _system {
 	ull a;
@@ -29,16 +168,8 @@ ull _euclide_algorithm(ull a, ull b)
 
 ull rand_get_next()
 {
-	number a, x0, c, m, sum, mod;
 	generator.x0 = generator.next;
-	a = ull_to_number(generator.a);
-	x0 = ull_to_number(generator.x0);
-	c = ull_to_number(generator.c);
-	m = ull_to_number(generator.m);
-	sum = multiplication(&a, &x0);
-	sum = addition(&sum, &c);
-	division_with_module(&sum, &m, &mod);
-	generator.next = number_to_ull(&mod);
+	generator.next = sum_mod(mul_mod(generator.a, generator.x0, generator.m), generator.c, generator.m);
 	return generator.next;
 }
 
