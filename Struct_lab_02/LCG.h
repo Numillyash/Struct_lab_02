@@ -1,6 +1,5 @@
 #pragma once
 #include "config.h"
-#include "bit_LA.h"
 #include "output.h"
 
 void get_c_wm(ull numbers[6]);
