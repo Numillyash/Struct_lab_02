@@ -40,14 +40,14 @@ typedef enum {
 	GET_C,
 	GET_A,
 	LCG,
-	BITS
+	TEST
 }WORK_MODE;
 
 enum {
-	GET_C_AC = 3,
+	GET_C_AC = 4,
 	GET_A_AC = 2,
 	LCG_AC = 6,
-	BITS_AC = 6
+	TEST_AC = 2
 }WM_ARG_COUNT;
 
 // fast funcs

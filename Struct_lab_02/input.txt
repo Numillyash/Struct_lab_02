@@ -1,4 +1,4 @@
-get_a m=384945
+ cmin=400 m=987 get_c cmax=500 
 //
 get_c s=2031 m=203945
 get_a m=384945

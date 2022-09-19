@@ -170,6 +170,7 @@ ull rand_get_next()
 {
 	generator.x0 = generator.next;
 	generator.next = sum_mod(mul_mod(generator.a, generator.x0, generator.m), generator.c, generator.m);
+    // = (a*x0+c)%m;
 	return generator.next;
 }
 
@@ -184,16 +185,14 @@ void rand_init(ull _a, ull _x0, ull _c, ull _m)
 
 void get_c_wm(ull numbers[6]) 
 {
-	ull c, m = numbers[2], s = numbers[1], c_max, c_min;
-	int count = 0;
-	if (m == 0 || s == 0 || s > 64)
+	ull c, m = numbers[3], c_max = numbers[2], c_min = numbers[1];
+	ull count = 0;
+	if (m == 0 || c_max == 0 || c_min == 0 || c_max < c_min || c_max >= m)
 	{
 		save_text("no solution");
 	}
 	else
 	{
-		c_min = (ull)1 << (s-1);
-		c_max = (ull)1 << s;
 		for (c = c_min; c <= c_max; c++)
 		{
 			if (c >= m)
@@ -203,8 +202,6 @@ void get_c_wm(ull numbers[6])
 				count++;
 				save_int(c);
 			}
-			if (count == 10)
-				break;
 		}
 	}
 	if (!count)
@@ -245,6 +242,7 @@ void get_a_wm(ull numbers[6])
 	}
 	a = b + 1;
 	m = numbers[1];
+	printf("%d %d\n", a, m);
 	if(a > m || a == 0 || m == 0) 
 	{
 		save_text("no solution");
@@ -268,46 +266,37 @@ void lcg_wm(ull numbers[6])
 		rand_init(numbers[1], numbers[2], numbers[3], numbers[4]);
 		for (i = 0; i < numbers[5]; i++)
 		{
-			save_int(rand_get_next());
+			save_bin(rand_get_next());
 		}
 	}
 }
 
-void bits_wm(ull numbers[6])
+void test_wm(char* inp_file)
 {
-	ull _bits[64];
-	ull i;
-	ull numb;
-	int j;
+    ull count = 0;
+    FILE* inp = fopen(inp_file, "r");
+    if (inp == NULL)
+    {
+        save_text("no solution");
+        exit(EXIT_SUCCESS);
+    }
+    
+    // 64 бита
+    //
+    // то бишь можно разделить на 8 блоков по 8 бит и считать кол-ва единичек и нулей
+    //
 
-	for (i = 0; i < 64; i++)
-	{
-		_bits[i] = 0;
-	}
+    char* bin_num[70];
+    fscanf(inp, "%s", bin_num);
 
-	if (numbers[5] == 0 || numbers[4] == 0 || numbers[1] < 2 || (numbers[2] == 0 && numbers[3] == 0) || numbers[1] >= numbers[4] || numbers[2] >= numbers[4] || numbers[3] >= numbers[4])
-	{
-		save_text("no solution");
-	}
-	else
-	{
-		rand_init(numbers[1], numbers[2], numbers[3], numbers[4]);
+    while (strlen(bin_num) > 0)
+    {
+        if (strlen(bin_num) > 64)
+        {
+            save_text("no solution");
+            exit(EXIT_SUCCESS);
+        }
 
-		for (i = 0; i < numbers[5]; i++)
-		{
-			numb = rand_get_next();
-			j = 0;
-			while (numb != 0)
-			{
-				if (numb % 2)
-					_bits[j]++;
-				numb >>= 1;
-				j++;
-			}
-		}
-		for (i = 64; i > 0; i--)
-		{
-			save_int(_bits[i-1]);
-		}
-	}
+    }
+
 }

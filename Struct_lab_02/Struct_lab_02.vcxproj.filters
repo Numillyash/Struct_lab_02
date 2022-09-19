@@ -27,9 +27,6 @@
     <ClCompile Include="LCG.c">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="bit_LA.c">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h">
@@ -42,9 +39,6 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="LCG.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="bit_LA.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
